@@ -1,39 +1,29 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Cadastro de Serviço</title>
-  <link rel="stylesheet" href="estilos.css" />
+  <title>Serviços Maria - Interface Moderna</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
+
 <body>
-  <div class="container">
-    <h1>Cadastro de Serviço</h1>
-    <form id="formServico">
-      <label for="nome">Nome do Serviço:</label>
-      <input type="text" id="nome" required />
+  <header>
+    <h1>Serviços Maria</h1>
+    <p>Escolha um serviço para ver mais detalhes</p>
+  </header>
 
-      <label for="descricao">Descrição:</label>
-      <textarea id="descricao" rows="3" required></textarea>
+  <main id="servicos-container" class="grid-container">
+    <!-- Cards serão gerados aqui -->
+  </main>
 
-      <label for="preco">Preço (R$):</label>
-      <input type="number" id="preco" min="0" step="0.01" required />
-
-      <label>
-        <input type="checkbox" id="premium" />
-        Serviço Premium?
-      </label>
-
-      <div id="taxaExtraContainer" style="display:none;">
-        <label for="taxaExtra">Taxa Extra (R$):</label>
-        <input type="number" id="taxaExtra" min="0" step="0.01" />
-      </div>
-
-      <button type="submit">Cadastrar</button>
-    </form>
-
-    <div id="resultado"></div>
-  </div>
+  <section id="detalhes-servico" class="modal hidden" aria-hidden="true" role="dialog" aria-labelledby="modal-title">
+    <div class="modal-content">
+      <h2 id="modal-title">Detalhes do Serviço</h2>
+      <div id="detalhes-conteudo"></div>
+      <button class="btn fechar-btn" onclick="fecharDetalhes()">Fechar</button>
+    </div>
+  </section>
 
   <script src="script.js"></script>
 </body>

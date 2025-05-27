@@ -1,71 +1,82 @@
-class Servico {
-  constructor(nome, descricao, preco) {
-    this.nome = nome;
-    this.descricao = descricao;
-    this.preco = parseFloat(preco);
-    this.codigo_interno = self.crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).slice(2);
+const servicos = [
+  {
+    nome: 'Limpeza residencial',
+    descricao: 'Limpeza completa de casas e apartamentos',
+    preco: 150.00
+  },
+  {
+    nome: 'Manutenção de PC',
+    descricao: 'Formatação, limpeza e instalação de softwares',
+    preco: 200.00
+  },
+  {
+    nome: 'Passeio com cachorro',
+    descricao: 'Passear, alimentar e dar água',
+    preco: 30.00
+  },
+  {
+    nome: 'Reparos automotivos',
+    descricao: 'Reparos gerais de automóveis',
+    preco: 250.00
+  },
+  {
+    nome: 'Limpeza pós-obra (Premium)',
+    descricao: 'Limpeza pesada após reforma',
+    preco: 300.00,
+    taxa_extra: 50.00
   }
+];
 
-  exibirDados() {
-    return `Nome: ${this.nome}
-Descrição: ${this.descricao}
-Preço: R$ ${this.preco.toFixed(2)}
-Código interno: ${this.codigo_interno}`;
-  }
+const container = document.getElementById("servicos-container");
+const detalhes = document.getElementById("detalhes-servico");
+const detalhesConteudo = document.getElementById("detalhes-conteudo");
 
-  aplicarDesconto(percentual) {
-    const desconto = (this.preco * percentual) / 100;
-    this.preco -= desconto;
-  }
-
-  atualizarPreco(novoPreco) {
-    this.preco = parseFloat(novoPreco);
-  }
+// Função para criar os cards dinamicamente
+function criarCards() {
+  servicos.forEach((servico, index) => {
+    const card = document.createElement("div");
+    card.className = "card";
+    card.innerHTML = `
+      <h3>${servico.nome}</h3>
+      <p class="preco">R$ ${servico.preco.toFixed(2)}</p>
+      <button aria-label="Ver detalhes do serviço ${servico.nome}" onclick="mostrarDetalhes(${index})">Ver detalhes</button>
+    `;
+    container.appendChild(card);
+  });
 }
 
-class ServicoPremium extends Servico {
-  constructor(nome, descricao, preco, taxaExtra) {
-    super(nome, descricao, preco);
-    this.taxaExtra = parseFloat(taxaExtra);
-  }
-
-  aplicarTaxaExtra() {
-    this.preco += this.taxaExtra;
-  }
-
-  exibirDados() {
-    return super.exibirDados() + `\nTaxa extra (premium): R$ ${this.taxaExtra.toFixed(2)}`;
-  }
+// Mostra detalhes e abre modal
+function mostrarDetalhes(index) {
+  const s = servicos[index];
+  detalhesConteudo.innerHTML = `
+    <p><strong>Nome:</strong> ${s.nome}</p>
+    <p><strong>Descrição:</strong> ${s.descricao}</p>
+    <p><strong>Preço:</strong> R$ ${s.preco.toFixed(2)}</p>
+    ${s.taxa_extra ? `<p><strong>Taxa Extra (Premium):</strong> R$ ${s.taxa_extra.toFixed(2)}</p>` : ""}
+  `;
+  detalhes.classList.remove("hidden");
+  detalhes.setAttribute("aria-hidden", "false");
+  document.body.style.overflow = 'hidden'; // trava scroll ao abrir modal
 }
 
-const form = document.getElementById("formServico");
-const premiumCheckbox = document.getElementById("premium");
-const taxaExtraContainer = document.getElementById("taxaExtraContainer");
-const resultadoDiv = document.getElementById("resultado");
+// Fecha modal
+function fecharDetalhes() {
+  detalhes.classList.add("hidden");
+  detalhes.setAttribute("aria-hidden", "true");
+  document.body.style.overflow = 'auto'; // libera scroll ao fechar modal
+}
 
-premiumCheckbox.addEventListener("change", () => {
-  taxaExtraContainer.style.display = premiumCheckbox.checked ? "block" : "none";
+// Fecha modal se clicar fora da caixa de conteúdo
+detalhes.addEventListener("click", e => {
+  if (e.target === detalhes) fecharDetalhes();
 });
 
-form.addEventListener("submit", (e) => {
-  e.preventDefault();
-
-  const nome = document.getElementById("nome").value.trim();
-  const descricao = document.getElementById("descricao").value.trim();
-  const preco = document.getElementById("preco").value;
-  const premium = premiumCheckbox.checked;
-  const taxaExtra = document.getElementById("taxaExtra").value || 0;
-
-  let servico;
-  if (premium) {
-    servico = new ServicoPremium(nome, descricao, preco, taxaExtra);
-    servico.aplicarTaxaExtra();
-  } else {
-    servico = new Servico(nome, descricao, preco);
+// Fecha modal com ESC
+document.addEventListener("keydown", e => {
+  if (e.key === "Escape" && !detalhes.classList.contains("hidden")) {
+    fecharDetalhes();
   }
-
-  resultadoDiv.textContent = "Serviço cadastrado com sucesso:\n\n" + servico.exibirDados();
-
-  form.reset();
-  taxaExtraContainer.style.display = "none";
 });
+
+// Cria os cards na inicialização
+criarCards();
